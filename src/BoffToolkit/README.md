@@ -1,4 +1,4 @@
-# BoffToolkit
+# Boff.Toolkit
 A powerful toolkit for caching, pooling, configuration, and scheduling tasks.
 
 ## Features
@@ -9,7 +9,8 @@ A powerful toolkit for caching, pooling, configuration, and scheduling tasks.
 ## Installation
 Install via NuGet:
 ```sh
-dotnet add package BoffToolkit --version 1.6.0
+dotnet add package Boff.Toolkit --version 1.8.1
+```
 
 ## Support and Contact
 For questions, support, or commercial extensions:

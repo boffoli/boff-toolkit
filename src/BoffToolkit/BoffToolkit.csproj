@@ -4,13 +4,14 @@
     <TargetFrameworks>net471;net8.0</TargetFrameworks>
     <OutputType>Library</OutputType>
     <Version>1.8.1</Version>
+    <PackageId>Boff.Toolkit</PackageId>
     <PackageReleaseNotes></PackageReleaseNotes>
     <Authors>Nicola Boffoli</Authors>
     <Description>Toolkit supporting base activities: caching, pooling, configuration exceptions, scheduling, type loading</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageReleaseNotes>Nota di rilascio del pacchetto</PackageReleaseNotes>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/boffoli/BoffToolkit/tree/main/src/BoffToolkit</RepositoryUrl>
+    <RepositoryUrl>https://github.com/boffoli/boff-toolkit/tree/main/src/BoffToolkit</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <BaseOutputPath>bin\</BaseOutputPath>
     <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>

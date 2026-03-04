@@ -6,6 +6,11 @@ on:
     tags:
       - "v*"
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish (SemVer, e.g. 1.8.3). If empty, uses the csproj Version."
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -24,18 +29,39 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      - name: Extract version from tag
+      - name: Resolve package version
         id: version
+        shell: bash
         run: |
-          VERSION=${GITHUB_REF_NAME#v}
-          if [[ "$VERSION" == refs/* ]] || [[ -z "$VERSION" ]]; then VERSION="0.0.0-dev"; fi
+          set -euo pipefail
+
+          VERSION=""
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            VERSION="${GITHUB_REF_NAME#v}"
+          elif [[ -n "${{ github.event.inputs.version }}" ]]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION="$(grep -oPm1 '(?<=<Version>)[^<]+' src/BoffToolkit/BoffToolkit.csproj || true)"
+          fi
+
+          if [[ -z "${VERSION}" ]]; then
+            echo "Unable to resolve package version."
+            exit 1
+          fi
+
+          if ! [[ "${VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z-]+)*(\+[0-9A-Za-z.-]+)?$ ]]; then
+            echo "Invalid package version '${VERSION}'. Expected SemVer."
+            exit 1
+          fi
+
+          echo "Resolved package version: ${VERSION}"
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Build Boff.Toolkit
-        run: dotnet build src/BoffToolkit/BoffToolkit.csproj -c Release -f net8.0 -p:TargetFrameworks=net8.0 -v minimal
+        run: dotnet build src/BoffToolkit/BoffToolkit.csproj -c Release -p:TargetFramework=net8.0 -p:TargetFrameworks=net8.0 -v minimal
 
       - name: Pack Boff.Toolkit
-        run: dotnet pack src/BoffToolkit/BoffToolkit.csproj -c Release -f net8.0 -p:TargetFrameworks=net8.0 --no-build -o ./nupkg -p:Version=${{ steps.version.outputs.VERSION }}
+        run: dotnet pack src/BoffToolkit/BoffToolkit.csproj -c Release --no-build -o ./nupkg -p:TargetFramework=net8.0 -p:TargetFrameworks=net8.0 -p:Version=${{ steps.version.outputs.VERSION }}
 
       - name: Push to NuGet.org
         run: dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate

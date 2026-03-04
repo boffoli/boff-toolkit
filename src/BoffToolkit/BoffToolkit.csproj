@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net471;net8.0</TargetFrameworks>
     <OutputType>Library</OutputType>
+    <PackageId>Boff.Toolkit</PackageId>
     <Version>1.8.1</Version>
     <PackageId>Boff.Toolkit</PackageId>
     <PackageReleaseNotes></PackageReleaseNotes>

@@ -64,7 +64,12 @@ jobs:
         run: dotnet pack src/BoffToolkit/BoffToolkit.csproj -c Release --no-build -o ./nupkg -p:TargetFramework=net8.0 -p:TargetFrameworks=net8.0 -p:Version=${{ steps.version.outputs.VERSION }}
 
       - name: Push to NuGet.org
+        if: ${{ secrets.NUGET_API_KEY != '' }}
         run: dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+      - name: Skip NuGet.org (missing NUGET_API_KEY)
+        if: ${{ secrets.NUGET_API_KEY == '' }}
+        run: echo "NUGET_API_KEY is not configured. Skipping NuGet.org publish."
 
       - name: Push to GitHub Packages
         run: dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate

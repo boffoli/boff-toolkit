@@ -39,6 +39,18 @@ namespace BoffToolkit.Pooling {
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="PoolManager{TKey, TValue}"/> class using
+        /// a factory that does not depend on the key.
+        /// </summary>
+        /// <param name="instanceCreator">A function that creates a new instance of the object.</param>
+        /// <param name="maxInstancesPerKey">The maximum number of instances to maintain in the pool for each key.</param>
+        /// <param name="cleanupInterval">The interval between periodic cleanups.</param>
+        /// <param name="maxIdleTime">The maximum idle time before an object is removed.</param>
+        public PoolManager(Func<TValue> instanceCreator, int maxInstancesPerKey, TimeSpan cleanupInterval, TimeSpan maxIdleTime)
+            : this(_ => instanceCreator(), maxInstancesPerKey, cleanupInterval, maxIdleTime) {
+        }
+
+        /// <summary>
         /// Retrieves an instance of the object for the specified key, or creates a new one if none are available.
         /// </summary>
         /// <param name="key">The key for which to retrieve or create the object.</param>

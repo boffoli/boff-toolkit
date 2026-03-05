@@ -1,4 +1,5 @@
-﻿using AutoFixture;
+﻿using System;
+using AutoFixture;
 using AutoFixture.Kernel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -121,12 +122,20 @@ namespace BoffToolkit.JsonValidator {
 
             public static ValidationResult TryValidateContent(string jsonContent, string jsonSchema) {
                 try {
-                    Console.WriteLine("Schema JSON:");
-                    Console.WriteLine(jsonSchema); // Stampa lo schema JSON
+                    var verbose = string.Equals(
+                        Environment.GetEnvironmentVariable("BOFF_JSON_VALIDATOR_VERBOSE"),
+                        "true",
+                        StringComparison.OrdinalIgnoreCase);
+                    if (verbose) {
+                        Console.WriteLine("Schema JSON:");
+                        Console.WriteLine(jsonSchema); // Stampa lo schema JSON
+                    }
                     var schema = JSchema.Parse(jsonSchema);
 
-                    Console.WriteLine("Contenuto JSON:");
-                    Console.WriteLine(jsonContent); // Stampa il contenuto JSON
+                    if (verbose) {
+                        Console.WriteLine("Contenuto JSON:");
+                        Console.WriteLine(jsonContent); // Stampa il contenuto JSON
+                    }
                     var token = JToken.Parse(jsonContent);
                     var isValid = token.IsValid(schema, out IList<ValidationError> validationErrors);
 
